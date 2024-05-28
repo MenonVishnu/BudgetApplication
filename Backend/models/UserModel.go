@@ -17,3 +17,12 @@ type User struct {
 	Password string             `json:"password,omitempty"`
 	Role     Role               `json:"role,omitempty"`  //this make sures that The field Role can Accept only 2 values admin/user
 }
+
+/*
+{
+	"name":"Vishnu Menon",
+	"email":"vishnu.jio@gmail.com",
+	"password":"thissucks",
+	"role":"Admin"
+}
+*/
