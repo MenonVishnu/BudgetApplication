@@ -7,7 +7,7 @@ import (
 
 	"github.com/vishnumenon/budgetapplication/database"
 	"github.com/vishnumenon/budgetapplication/models"
-	"go.mongodb.org/mongo-driver/bson"
+	// "go.mongodb.org/mongo-driver/bson"
 )
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
