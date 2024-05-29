@@ -16,8 +16,9 @@ func Router() *mux.Router {
 		json.NewEncoder(w).Encode("Hello From Port 4000")
 	}).Methods("GET")
 
-	
-	router.HandleFunc("/api/user", controllers.AddUser).Methods("POST")
+	//user routes
+	router.HandleFunc("/api/user", controllers.AddUser).Methods("POST")        //add user route
+	router.HandleFunc("/api/user/{id}", controllers.UpdateUser).Methods("PUT") //update user route
 
 	return router
 }
