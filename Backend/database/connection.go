@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var connectionString = getEnvValue("MONGODB_URI")
+var connectionString = GetEnvValue("MONGODB_URI")
 const dbName = "BudgetApplication"
 const colName1 = "User"
 const colName2 = "Budget"
@@ -40,7 +40,7 @@ func init() {
 //probably in a different file
 
 //helper function
-func getEnvValue(key string) string{
+func GetEnvValue(key string) string{
 	err := godotenv.Load()
 	if err != nil{
 		log.Fatal(err)
