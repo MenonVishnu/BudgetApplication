@@ -11,6 +11,7 @@ import (
 )
 
 func AddUser(user models.User) {
+
 	inserted, err := UserCollection.InsertOne(context.Background(), user)
 
 	if err != nil {
@@ -44,3 +45,5 @@ func UpdateUser(user models.User, movieId string) {
 	fmt.Println("User Updated with object ID: ", movieId, " no: ", updatedUser.ModifiedCount)
 
 }
+
+//probably in a different file

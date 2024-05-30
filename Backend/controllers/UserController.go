@@ -3,8 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/vishnumenon/budgetapplication/database"
 	"github.com/vishnumenon/budgetapplication/models"
@@ -20,6 +22,15 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 
 	//decoding the JSON and assigning those values into the reference model variable
 	_ = json.NewDecoder(r.Body).Decode(&user)
+
+	//performing validation
+	validate := validator.New()
+	err := validate.Struct(user)
+	if err != nil {
+		log.Fatal(err)
+
+	}
+
 	database.AddUser(user)
 	fmt.Println(user.ID)
 	json.NewEncoder(w).Encode(user)
