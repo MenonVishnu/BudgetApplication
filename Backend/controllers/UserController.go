@@ -3,12 +3,14 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+
 	// "log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/vishnumenon/budgetapplication/database"
+	helperfunctions "github.com/vishnumenon/budgetapplication/helperfunction"
 	"github.com/vishnumenon/budgetapplication/models"
 	// "go.mongodb.org/mongo-driver/bson"
 )
@@ -30,8 +32,15 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		errors := err.(validator.ValidationErrors)
 		http.Error(w, fmt.Sprintf("Validation error: %s", errors), http.StatusBadRequest)
 		// log.Fatal(errors)
-		return 
+		return
 	}
+	//performing validation for Role
+	if !helperfunctions.ValidateRole(user) {
+		http.Error(w, fmt.Sprintf("Validation error: %s", "Undefined Role"), http.StatusBadRequest)
+		return
+	}
+
+	//TODO: check whether a user with the same email-ID exists or not
 
 	database.AddUser(user)
 	fmt.Println(user.ID)
