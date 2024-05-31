@@ -14,7 +14,7 @@ type User struct {
 	Name     string             `json:"name,omitempty" validate:"required,min=5"`
 	Email    string             `json:"email,omitempty" validate:"required,email"`
 	Password string             `json:"password,omitempty" validate:"required,min=8"`
-	Role     Role               `json:"role,omitempty"` //this make sures that The field Role can Accept only 2 values admin/user
+	Role     Role               `json:"role,omitempty" validate:"required"` //this make sures that The field Role can Accept only 2 values admin/user
 }
 
 /*

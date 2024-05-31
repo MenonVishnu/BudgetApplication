@@ -14,7 +14,7 @@ func main() {
 	r := routers.Router()
 
 	port := database.GetEnvValue("PORT")
-	fmt.Println("Server Starting....")
+	fmt.Println("Server Starting....", port)
 	log.Fatal(http.ListenAndServe(port, r))
 	fmt.Println("Server Listening at PORT: 4000")
 

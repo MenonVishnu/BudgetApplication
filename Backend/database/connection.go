@@ -21,7 +21,6 @@ var UserCollection *mongo.Collection
 var BudgetCollection *mongo.Collection
 
 func init() {
-	fmt.Println(connectionString)
 	clientOption := options.Client().ApplyURI(connectionString)
 
 	client, err := mongo.Connect(context.TODO(), clientOption)

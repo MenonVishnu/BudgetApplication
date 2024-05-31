@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	// "log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -27,8 +27,10 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	validate := validator.New()
 	err := validate.Struct(user)
 	if err != nil {
-		log.Fatal(err)
-
+		errors := err.(validator.ValidationErrors)
+		http.Error(w, fmt.Sprintf("Validation error: %s", errors), http.StatusBadRequest)
+		// log.Fatal(errors)
+		return 
 	}
 
 	database.AddUser(user)
