@@ -41,6 +41,12 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO: check whether a user with the same email-ID exists or not
+	if database.CheckUser(user.Email) {
+		http.Error(w, fmt.Sprintf("User Aldready Exists: Please Login"), http.StatusBadRequest)
+		return
+	}
+
+	//TODO: before saving it into the database you need to encrypt the password.
 
 	database.AddUser(user)
 	fmt.Println(user.ID)
