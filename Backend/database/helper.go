@@ -47,6 +47,8 @@ func UpdateUser(user models.User, movieId string) {
 
 }
 
+// helper function
+// the below function returns true if there exists a user with the email-id provided in the function parameters
 func CheckUser(email string) bool {
 
 	var result models.User
@@ -70,4 +72,3 @@ func CheckUser(email string) bool {
 	return true
 }
 
-//probably in a different file
