@@ -12,7 +12,6 @@ import (
 	"github.com/vishnumenon/budgetapplication/database"
 	helperfunctions "github.com/vishnumenon/budgetapplication/helperfunction"
 	"github.com/vishnumenon/budgetapplication/models"
-	// "go.mongodb.org/mongo-driver/bson"
 )
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +39,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO: check whether a user with the same email-ID exists or not
+	//check whether a user with the same email-ID exists or not - done
 	if database.CheckUser(user.Email) {
 		http.Error(w, fmt.Sprintf("User Aldready Exists: Please Login"), http.StatusBadRequest)
 		return
@@ -48,7 +47,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 
 	//TODO: before saving it into the database you need to encrypt the password.
 
-	database.AddUser(user)
+	user.ID = database.AddUser(user)
 	fmt.Println(user.ID)
 	json.NewEncoder(w).Encode(user)
 }
@@ -61,6 +60,9 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
+
+	//TODO: Validation of updated user
+
 	database.UpdateUser(user, params["id"])
 	json.NewEncoder(w).Encode(user)
 }

@@ -11,15 +11,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func AddUser(user models.User) {
+func AddUser(user models.User) primitive.ObjectID {
 
 	inserted, err := UserCollection.InsertOne(context.Background(), user)
 
 	if err != nil {
 		log.Fatal(err)
 	}
+	//changing data type from interface to primitive.objectId
+	userId := inserted.InsertedID.(primitive.ObjectID)
 
-	fmt.Println("User has been inserted Successfully with ID: ", inserted.InsertedID)
+	fmt.Println("User has been inserted Successfully with ID: ", userId)
+	return userId
 }
 
 func UpdateUser(user models.User, movieId string) {
@@ -60,7 +63,8 @@ func CheckUser(email string) bool {
 	err := UserCollection.FindOne(context.Background(), filter, opts).Decode(&result)
 
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
+		return false
 	}
 
 	//if result is empty then there is no user and thus it returns false
@@ -71,4 +75,3 @@ func CheckUser(email string) bool {
 	//if result is not empty then there is a user present with the same email id and thus returns true
 	return true
 }
-
