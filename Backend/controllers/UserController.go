@@ -3,8 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-
-	// "log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -46,7 +44,8 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO: before saving it into the database you need to encrypt the password.
+	//before saving it into the database you need to encrypt the password.
+	user.Password = database.EncryptPassword(user.Password)
 
 	user.ID = database.AddUser(user)
 	fmt.Println(user.ID)
@@ -81,3 +80,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	user.ID, _ = primitive.ObjectIDFromHex(params["id"])
 	json.NewEncoder(w).Encode(user)
 }
+
+
+//TODO: Delete User
+
+//TODO: Delete All User
+
+//TODO: Get One User
+
+//TODO: Get All User
