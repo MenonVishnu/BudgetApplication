@@ -12,6 +12,7 @@ import (
 	"github.com/vishnumenon/budgetapplication/database"
 	helperfunctions "github.com/vishnumenon/budgetapplication/helperfunction"
 	"github.com/vishnumenon/budgetapplication/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
@@ -61,8 +62,22 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
 
-	//TODO: Validation of updated user
+	//Validation of updated user
+	validate := validator.New()
+	err := validate.Struct(user)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		http.Error(w, fmt.Sprintf("Validation error: %s", errors), http.StatusBadRequest)
+		// log.Fatal(errors)
+		return
+	}
+	//performing validation for Role
+	if !helperfunctions.ValidateRole(user) {
+		http.Error(w, fmt.Sprintf("Validation error: %s", "Undefined Role"), http.StatusBadRequest)
+		return
+	}
 
 	database.UpdateUser(user, params["id"])
+	user.ID, _ = primitive.ObjectIDFromHex(params["id"])
 	json.NewEncoder(w).Encode(user)
 }
