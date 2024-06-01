@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/vishnumenon/budgetapplication/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,8 +27,8 @@ func AddUser(user models.User) primitive.ObjectID {
 	return userId
 }
 
-func UpdateUser(user models.User, movieId string) {
-	id, err := primitive.ObjectIDFromHex(movieId)
+func UpdateUser(user models.User, userId string) {
+	id, err := primitive.ObjectIDFromHex(userId)
 
 	if err != nil {
 		log.Fatal(err)
@@ -47,7 +48,25 @@ func UpdateUser(user models.User, movieId string) {
 		log.Fatal(err)
 	}
 
-	fmt.Println("User Updated with object ID: ", movieId, " no: ", updatedUser.ModifiedCount)
+	fmt.Println("User Updated with object ID: ", userId, " Documents Affected: ", updatedUser.ModifiedCount)
+}
+
+func DeleteUser(userId string){
+	id, err := primitive.ObjectIDFromHex(userId)
+
+	if err!=nil{
+		log.Fatal(err)
+	}
+
+	filter := bson.M{"_id":id}
+
+	deletedUser, err := UserCollection.DeleteOne(context.Background(),filter)
+
+	if err!=nil{
+		log.Fatal(err)
+	}
+
+	fmt.Println("User Deleted with ObjectId: ",userId, " Documents Affected: ", deletedUser.DeletedCount)
 
 }
 

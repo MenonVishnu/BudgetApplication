@@ -81,8 +81,16 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+// TODO: Delete User
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
-//TODO: Delete User
+	params := mux.Vars(r)
+	database.DeleteUser(params["id"])
+	json.NewEncoder(w).Encode("User Deleted Successfully")
+
+}
 
 //TODO: Delete All User
 
