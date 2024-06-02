@@ -40,7 +40,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 
 	//check whether a user with the same email-ID exists or not - done
 	if database.CheckUser(user.Email) {
-		http.Error(w, fmt.Sprintf("User Aldready Exists: Please Login"), http.StatusBadRequest)
+		http.Error(w, fmt.Sprint("User Aldready Exists: Please Login"), http.StatusBadRequest)
 		return
 	}
 
@@ -81,7 +81,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// TODO: Delete User
+// TODO: test all these routes
+// Delete User
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
@@ -89,10 +90,10 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	database.DeleteUser(params["id"])
 	json.NewEncoder(w).Encode("User Deleted Successfully")
-	
+
 }
 
-//TODO: Delete All User
+// Delete All User
 func DeleteAllUser(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
@@ -101,6 +102,22 @@ func DeleteAllUser(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode("Database Truncated Successfully!!")
 }
 
-//TODO: Get One User
+//Get One User
+func GetOneUser(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "GET")
+
+	params := mux.Vars(r)
+
+	user := database.GetUser(params["id"])
+	json.NewEncoder(w).Encode(user)
+
+}
 
 //TODO: Get All User
+func GetAllUser(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "GET")
+
+	
+}
