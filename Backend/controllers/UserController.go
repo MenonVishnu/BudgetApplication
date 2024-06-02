@@ -89,10 +89,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	database.DeleteUser(params["id"])
 	json.NewEncoder(w).Encode("User Deleted Successfully")
-
+	
 }
 
 //TODO: Delete All User
+func DeleteAllUser(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
+
+	database.DeleteAllUser()
+	json.NewEncoder(w).Encode("Database Truncated Successfully!!")
+}
 
 //TODO: Get One User
 

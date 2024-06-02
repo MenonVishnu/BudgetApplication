@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"path/filepath"
 
 	"github.com/vishnumenon/budgetapplication/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -67,6 +66,18 @@ func DeleteUser(userId string){
 	}
 
 	fmt.Println("User Deleted with ObjectId: ",userId, " Documents Affected: ", deletedUser.DeletedCount)
+
+}
+
+func DeleteAllUser(){
+	filter := bson.M{}
+	deletedUser, err := UserCollection.DeleteMany(context.Background(), filter)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("All Users Deleted, Documents Affected:  ",deletedUser.DeletedCount)
 
 }
 
