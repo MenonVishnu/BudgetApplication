@@ -50,26 +50,26 @@ func UpdateUser(user models.User, userId string) {
 	fmt.Println("User Updated with object ID: ", userId, " Documents Affected: ", updatedUser.ModifiedCount)
 }
 
-func DeleteUser(userId string){
+func DeleteUser(userId string) {
 	id, err := primitive.ObjectIDFromHex(userId)
 
-	if err!=nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	filter := bson.M{"_id":id}
+	filter := bson.M{"_id": id}
 
-	deletedUser, err := UserCollection.DeleteOne(context.Background(),filter)
+	deletedUser, err := UserCollection.DeleteOne(context.Background(), filter)
 
-	if err!=nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("User Deleted with ObjectId: ",userId, " Documents Affected: ", deletedUser.DeletedCount)
+	fmt.Println("User Deleted with ObjectId: ", userId, " Documents Affected: ", deletedUser.DeletedCount)
 
 }
 
-func DeleteAllUser(){
+func DeleteAllUser() {
 	filter := bson.M{}
 	deletedUser, err := UserCollection.DeleteMany(context.Background(), filter)
 
@@ -77,44 +77,58 @@ func DeleteAllUser(){
 		log.Fatal(err)
 	}
 
-	fmt.Println("All Users Deleted, Documents Affected:  ",deletedUser.DeletedCount)
+	fmt.Println("All Users Deleted, Documents Affected:  ", deletedUser.DeletedCount)
 
 }
 
-//possibly will not work
-func GetUser(userId string) models.User{
+// possibly will not work
+func GetUser(userId string) models.User {
 
 	var user models.User
 
 	id, err := primitive.ObjectIDFromHex(userId)
-	if err!=nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	filter := bson.M{"_id":id}
+	filter := bson.M{"_id": id}
 	project := bson.M{"password": 0}
 	opts := options.FindOne().SetProjection(project)
 
-	err = UserCollection.FindOne(context.Background(),filter, opts).Decode(&user)
+	err = UserCollection.FindOne(context.Background(), filter, opts).Decode(&user)
 
 	//please check will this work or not??
-	if err == nil {
+	if err != nil {
 		return models.User{}
 	}
 
 	return user
 }
 
-func GetAllUser() []primitive.M{
-	var users []primitive.M 
+// change GetUser according to below??
+func GetAllUser() []primitive.M {
+	var users []primitive.M
 
 	filter := bson.M{}
 	project := bson.M{"password": 0}
 	opts := options.Find().SetProjection(project)
 
-	curr, err = UserCollection.Find(context.Background(),filter, opts)
+	curr, err := UserCollection.Find(context.Background(), filter, opts)
 
-	
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for curr.Next(context.Background()) {
+		var user bson.M
+		err = curr.Decode(&user)
+		if err != nil {
+			log.Fatal(err)
+		}
+		users = append(users, user)
+	}
+
+	return users
 }
 
 // helper function

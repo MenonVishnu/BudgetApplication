@@ -81,7 +81,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// TODO: test all these routes
 // Delete User
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -94,7 +93,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete All User
-func DeleteAllUser(w http.ResponseWriter, r *http.Request){
+func DeleteAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
@@ -102,9 +101,10 @@ func DeleteAllUser(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode("Database Truncated Successfully!!")
 }
 
-//Get One User
-func GetOneUser(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
+
+// Get One User
+func GetOneUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
 	params := mux.Vars(r)
@@ -114,10 +114,13 @@ func GetOneUser(w http.ResponseWriter, r *http.Request){
 
 }
 
-//TODO: Get All User
-func GetAllUser(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
+
+// TODO: Get All User & Test the functionality
+func GetAllUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
-	
 }
+
+//TODO: Give a json as response with dedicated formatting
+
