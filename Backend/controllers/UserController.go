@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -51,7 +50,6 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	user.ID = database.AddUser(user)
 	message := "User created Successfully with ObjectId: " + user.ID.Hex()
 	models.SuccessResponse(w, 201, message, user)
-	// json.NewEncoder(w).Encode(user)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -68,19 +66,20 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	err := validate.Struct(user)
 	if err != nil {
 		errors := err.(validator.ValidationErrors)
-		http.Error(w, fmt.Sprintf("Validation error: %s", errors), http.StatusBadRequest)
-		// log.Fatal(errors)
+		models.ErrorResponse(w, 403, "Vallidation Error!!", errors.Error())
 		return
 	}
 	//performing validation for Role
 	if !helperfunctions.ValidateRole(user) {
-		http.Error(w, fmt.Sprintf("Validation error: %s", "Undefined Role"), http.StatusBadRequest)
+		err := map[string]string{"Key": "User.Role", "Field": "Role Not Defined"}
+		models.ErrorResponse(w, 403, "Vallidation Error!!", err)
 		return
 	}
 
 	database.UpdateUser(user, params["id"])
 	user.ID, _ = primitive.ObjectIDFromHex(params["id"])
-	json.NewEncoder(w).Encode(user)
+	message := "User updated Successfully with ObjectId: " + user.ID.Hex()
+	models.SuccessResponse(w, 201, message, user)
 }
 
 // Delete User
@@ -90,8 +89,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	database.DeleteUser(params["id"])
-	json.NewEncoder(w).Encode("User Deleted Successfully")
-
+	message := "User deleted Successfully with ObjectId: " + params["id"]
+	models.SuccessResponse(w, 201, message, nil)
 }
 
 // Delete All User
@@ -100,7 +99,8 @@ func DeleteAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
 	database.DeleteAllUser()
-	json.NewEncoder(w).Encode("Database Truncated Successfully!!")
+	message := "All Users Deleted Successfully"
+	models.SuccessResponse(w, 201, message, nil)
 }
 
 // Get One User
@@ -111,18 +111,30 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	user := database.GetUser(params["id"])
-	json.NewEncoder(w).Encode(user)
-
+	if user.ID == primitive.NilObjectID {
+		err := map[string]string{"Key": "User.Id", "Field": "User Not Found!"}
+		message := "User not found with ObjectId: " + params["id"]
+		models.ErrorResponse(w, 404, message, err)
+		return
+	}
+	message := "User successfully retrieved with ObjectId: " + params["id"]
+	models.SuccessResponse(w, 201, message, user)
 }
 
-// TODO: Get All User & Test the functionality
+// Get All User & Test the functionality
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
 	users := database.GetAllUser()
+	if len(users) == 0 {
+		err := map[string]string{"Key": "Database", "Field": "No User present in Database"}
+		models.ErrorResponse(w, 404, "Database Error", err)
+		return
+	}
 
-	json.NewEncoder(w).Encode(users)
+	message := "All users successfully retrieved!!"
+	models.SuccessResponse(w, 201, message, users)
 
 }
 
