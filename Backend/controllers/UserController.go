@@ -121,7 +121,7 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	models.SuccessResponse(w, 201, message, user)
 }
 
-// Get All User & Test the functionality
+// Get All Users
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
@@ -137,5 +137,3 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 	models.SuccessResponse(w, 201, message, users)
 
 }
-
-//TODO: Give a json as response with dedicated formatting
