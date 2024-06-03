@@ -28,19 +28,20 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	err := validate.Struct(user)
 	if err != nil {
 		errors := err.(validator.ValidationErrors)
-		http.Error(w, fmt.Sprintf("Validation error: %s", errors), http.StatusBadRequest)
-		// log.Fatal(errors)
+		models.ErrorResponse(w, 403, "Vallidation Error!!", errors.Error())
 		return
 	}
 	//performing validation for Role
 	if !helperfunctions.ValidateRole(user) {
-		http.Error(w, fmt.Sprintf("Validation error: %s", "Undefined Role"), http.StatusBadRequest)
+		err := map[string]string{"Key": "User.Role", "Field": "Role Not Defined"}
+		models.ErrorResponse(w, 403, "Vallidation Error!!", err)
 		return
 	}
 
 	//check whether a user with the same email-ID exists or not - done
 	if database.CheckUser(user.Email) {
-		http.Error(w, fmt.Sprint("User Aldready Exists: Please Login"), http.StatusBadRequest)
+		err := map[string]string{"Key": "User.Email", "Field": "User with same Email ID exists, Please Login"}
+		models.ErrorResponse(w, 409, "Vallidation Error!!", err)
 		return
 	}
 
@@ -48,8 +49,9 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	user.Password = database.EncryptPassword(user.Password)
 
 	user.ID = database.AddUser(user)
-	fmt.Println(user.ID)
-	json.NewEncoder(w).Encode(user)
+	message := "User created Successfully with ObjectId: " + user.ID.Hex()
+	models.SuccessResponse(w, 201, message, user)
+	// json.NewEncoder(w).Encode(user)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +103,6 @@ func DeleteAllUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Database Truncated Successfully!!")
 }
 
-
 // Get One User
 func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -114,13 +115,15 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-
 // TODO: Get All User & Test the functionality
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
+	users := database.GetAllUser()
+
+	json.NewEncoder(w).Encode(users)
+
 }
 
 //TODO: Give a json as response with dedicated formatting
-
