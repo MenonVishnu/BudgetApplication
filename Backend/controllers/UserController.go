@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -38,14 +39,14 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//check whether a user with the same email-ID exists or not - done
-	if database.CheckUser(user.Email) {
+	if database.CheckUser(user.Email) == "" {
 		err := map[string]string{"Key": "User.Email", "Field": "User with same Email ID exists, Please Login"}
 		models.ErrorResponse(w, 409, "Vallidation Error!!", err)
 		return
 	}
 
 	//before saving it into the database you need to encrypt the password.
-	user.Password = database.EncryptPassword(user.Password)
+	user.Password = helperfunctions.EncryptPassword(user.Password)
 
 	user.ID = database.AddUser(user)
 	message := "User created Successfully with ObjectId: " + user.ID.Hex()
@@ -135,5 +136,29 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 	message := "All users successfully retrieved!!"
 	models.SuccessResponse(w, 201, message, users)
+
+}
+
+//login and logout feature
+
+func LogIn(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "GET")
+
+	var user models.User
+
+	_ = json.NewDecoder(r.Body).Decode(&user)
+
+	pass  := database.CheckUser(user.Email)
+
+	//if no password then throw error because no user exists with that email
+	if pass == ""{
+		err := map[string]string{"Key": "Authentication", "Field": "Invalid Email or Password"}
+		models.ErrorResponse(w, 401, "Authentication Error", err)
+	}
+
+	if helperfunctions.CheckPassword(pass, user.Password){
+		fmt.Println("User Successfully Logged In")
+	}
 
 }

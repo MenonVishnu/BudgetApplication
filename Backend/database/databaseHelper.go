@@ -9,7 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func AddUser(user models.User) primitive.ObjectID {
@@ -131,9 +130,10 @@ func GetAllUser() []primitive.M {
 	return users
 }
 
+
 // helper function
 // the below function returns true if there exists a user with the email-id provided in the function parameters
-func CheckUser(email string) bool {
+func CheckUser(email string) string {
 
 	var result models.User
 
@@ -145,36 +145,14 @@ func CheckUser(email string) bool {
 
 	if err != nil {
 		// log.Fatal(err)
-		return false
+		return ""
 	}
 
 	//if result is empty then there is no user and thus it returns false
 	if result == (models.User{}) {
-		return false
+		return ""
 	}
 
 	//if result is not empty then there is a user present with the same email id and thus returns true
-	return true
-}
-
-// Encrypting Password
-func EncryptPassword(password string) string {
-	passwordByte := []byte(password)
-	hashedPassword, err := bcrypt.GenerateFromPassword(passwordByte, bcrypt.DefaultCost)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(hashedPassword)
-}
-
-// Comparing Given password with already present password
-func CheckPassword(hashedPassword string, givenPassword string) bool {
-	hashedPasswordByte := []byte(hashedPassword)
-	givenPasswordByte := []byte(givenPassword)
-
-	err := bcrypt.CompareHashAndPassword(hashedPasswordByte, givenPasswordByte)
-	if err != nil {
-		return false
-	}
-	return true
+	return result.Password
 }
