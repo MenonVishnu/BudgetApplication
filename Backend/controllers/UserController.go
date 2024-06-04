@@ -141,7 +141,7 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 //login and logout feature
 
-func LogIn(w http.ResponseWriter, r *http.Request){
+func LogIn(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
@@ -149,16 +149,20 @@ func LogIn(w http.ResponseWriter, r *http.Request){
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
 
-	pass  := database.CheckUser(user.Email)
+	pass := database.CheckUser(user.Email)
 
 	//if no password then throw error because no user exists with that email
-	if pass == ""{
+	if pass == "" {
 		err := map[string]string{"Key": "Authentication", "Field": "Invalid Email or Password"}
 		models.ErrorResponse(w, 401, "Authentication Error", err)
 	}
 
-	if helperfunctions.CheckPassword(pass, user.Password){
-		fmt.Println("User Successfully Logged In")
+	if !helperfunctions.CheckPassword(pass, user.Password) {
+		err := map[string]string{"Key": "Authentication", "Filed": "Invalid Email or Password"}
+		models.ErrorResponse(w, 401, "Authentication Error", err)
 	}
 
+	
+
+	fmt.Println("User Successfully Logged In")
 }
