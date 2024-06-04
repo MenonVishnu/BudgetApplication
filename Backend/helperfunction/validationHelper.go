@@ -35,7 +35,3 @@ func CheckPassword(hashedPassword string, givenPassword string) bool {
 	}
 	return true
 }
-
-func GenerateToken() {
-
-}
