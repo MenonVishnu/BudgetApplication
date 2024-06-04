@@ -140,6 +140,7 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 }
 
 //login and logout feature
+// implement OAuth instead of JWT Tokenisation
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -166,3 +167,17 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("User Successfully Logged In")
 }
+
+
+/*
+JWT Tokenization:  
+https://tanmay-vaish.hashnode.dev/how-to-implement-authentication-and-authorization-in-golang
+
+OAuth 2.0: 
+https://www.youtube.com/watch?v=lk8ONJI3k0c&pp=ygUWaGl0ZXNoIGNob3VkaGFyeSBvYXV0aA%3D%3D
+https://www.youtube.com/watch?v=996OiexHze0
+
+AWS:
+https://www.youtube.com/playlist?list=PLRAV69dS1uWSj3ltu0ym1LwWg4509PZ0N
+
+*/
