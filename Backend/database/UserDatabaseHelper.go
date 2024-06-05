@@ -126,10 +126,9 @@ func GetAllUser() []primitive.M {
 		}
 		users = append(users, user)
 	}
-
+	defer curr.Close(context.Background())
 	return users
 }
-
 
 // helper function
 // the below function returns true if there exists a user with the email-id provided in the function parameters
