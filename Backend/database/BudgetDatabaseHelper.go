@@ -50,6 +50,7 @@ func UpdateBudget(budget models.Budget, budgetId string) {
 
 }
 
+// user route
 func DeleteBudget(budgetId string) {
 	id, err := primitive.ObjectIDFromHex(budgetId)
 
@@ -61,7 +62,40 @@ func DeleteBudget(budgetId string) {
 
 	deleted, err := BudgetCollection.DeleteOne(context.Background(), filter)
 	if err != nil {
-		log.Fatal()
+		log.Fatal(err)
 	}
 	fmt.Println("Budget Deleted with object ID: ", budgetId, " Documents Affected: ", deleted.DeletedCount)
+}
+
+// admin route - delete all budgets
+func DeleteAllBudget() {
+	filter := bson.M{}
+
+	deleted, err := BudgetCollection.DeleteMany(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("All Budgets Deleted by Admin. Documents Affected: ", deleted.DeletedCount)
+}
+
+// delete budget of a specific user -> for admin and user
+// not completed may not work
+func DeleteAllUsersBudget(givenUserId string) {
+	userId, err := primitive.ObjectIDFromHex(givenUserId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// models.Budget
+	// var budgets []models.Budget
+	//filter out based on user id
+	filter := bson.M{"user._id": userId}
+	deletedBudgets, err := BudgetCollection.DeleteMany(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Budget belonging to User ID: ", userId, " Deleted Successfully. ", "Documents Affected: ", deletedBudgets.DeletedCount)
+
 }
