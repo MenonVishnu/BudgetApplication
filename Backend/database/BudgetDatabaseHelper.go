@@ -43,9 +43,25 @@ func UpdateBudget(budget models.Budget, budgetId string) {
 	updatedBudget, err := BudgetCollection.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {
-		log.Fatal(updatedBudget)
+		log.Fatal(err)
 	}
 
 	fmt.Println("Budget Updated with object ID: ", budgetId, " Documents Affected: ", updatedBudget.ModifiedCount)
 
+}
+
+func DeleteBudget(budgetId string) {
+	id, err := primitive.ObjectIDFromHex(budgetId)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	filter := bson.M{"_id": id}
+
+	deleted, err := BudgetCollection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		log.Fatal()
+	}
+	fmt.Println("Budget Deleted with object ID: ", budgetId, " Documents Affected: ", deleted.DeletedCount)
 }
