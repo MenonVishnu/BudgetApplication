@@ -50,6 +50,18 @@ func UpdateBudget(budget models.Budget, budgetId string) {
 
 }
 
+// admin route - delete all budgets
+func DeleteAllBudget() {
+	filter := bson.M{}
+
+	deleted, err := BudgetCollection.DeleteMany(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("All Budgets Deleted by Admin. Documents Affected: ", deleted.DeletedCount)
+}
+
 // user route
 func DeleteBudget(budgetId string) {
 	id, err := primitive.ObjectIDFromHex(budgetId)
@@ -67,20 +79,9 @@ func DeleteBudget(budgetId string) {
 	fmt.Println("Budget Deleted with object ID: ", budgetId, " Documents Affected: ", deleted.DeletedCount)
 }
 
-// admin route - delete all budgets
-func DeleteAllBudget() {
-	filter := bson.M{}
 
-	deleted, err := BudgetCollection.DeleteMany(context.Background(), filter)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("All Budgets Deleted by Admin. Documents Affected: ", deleted.DeletedCount)
-}
-
-// delete budget of a specific user -> for admin and user
-// not completed may not work
+// delete all budget of a specific user -> for admin and user
+// not completed / may not work
 func DeleteAllUsersBudget(givenUserId string) {
 	userId, err := primitive.ObjectIDFromHex(givenUserId)
 	if err != nil {
@@ -97,5 +98,76 @@ func DeleteAllUsersBudget(givenUserId string) {
 	}
 
 	fmt.Println("Budget belonging to User ID: ", userId, " Deleted Successfully. ", "Documents Affected: ", deletedBudgets.DeletedCount)
+}
 
+// admin get all budgets of all users
+func GetAllBudgets() []models.Budget{
+
+	var budgets []models.Budget
+
+	filter := bson.M{}
+	//object Id will not be given
+	// opts := options.Find().SetProjection(bson.M{"_id":0})
+	curr, err := BudgetCollection.Find(context.Background(), filter)
+
+	if err!=nil{
+		log.Fatal(err)
+	}
+
+	for curr.Next(context.Background()){
+		var budget models.Budget
+		err := curr.Decode(&budget)
+		if err!=nil{
+			log.Fatal(err)
+		}
+		budgets = append(budgets, budget)
+	}
+
+	return budgets
+}
+
+//user: get one budget based on the id
+func GetOneBudget(budgetId string) models.Budget{
+	id, err := primitive.ObjectIDFromHex(budgetId)
+
+	if err!=nil{
+		log.Fatal(err)
+	}
+
+	var budget models.Budget
+
+	filter := bson.M{"_id":id}
+	err = 	BudgetCollection.FindOne(context.Background(), filter).Decode(&budget)
+	if err!=nil{
+		log.Fatal(err)
+	}
+	return budget
+}
+
+//user: get all budgets of a specific user using userId 
+func GetAllUserBudget(userId string) []models.Budget{
+	id, err := primitive.ObjectIDFromHex(userId)
+	if err!=nil{
+		log.Fatal(err)
+	}
+
+	var budgets []models.Budget
+
+	filter := bson.M{"user._id":id}
+	curr, err := BudgetCollection.Find(context.Background(), filter)
+	if err!=nil{
+		log.Fatal(err)
+	}
+
+	
+	for curr.Next(context.Background()){
+		var budget models.Budget
+		err = curr.Decode(&budget)
+		if err!=nil{
+			log.Fatal(err)
+		}
+		budgets = append(budgets, budget)
+	}
+
+	return budgets
 }
