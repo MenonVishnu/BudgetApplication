@@ -18,6 +18,8 @@ func AddBudget(w http.ResponseWriter, r *http.Request) {
 	//creating a reference model variable
 	var budget models.Budget
 
+	//TODO: Add date and User inside the budget 
+
 	//decoding the JSON and assigning those values into the reference model variable
 	_ = json.NewDecoder(r.Body).Decode(&budget)
 
@@ -57,5 +59,56 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	budget.ID, _ = primitive.ObjectIDFromHex(params["id"])
 	message := "User updated Successfully with ObjectId: " + budget.ID.Hex()
 	models.SuccessResponse(w, 201, message, budget)
+
+}
+
+//admin 
+func DeleteAllBudget(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+
+	database.DeleteAllBudget()
+	message := "All Budget Deleted Successfully"
+	models.SuccessResponse(w,201,message,nil)
+}
+
+//user
+func DeleteOneBudget(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+
+	params := mux.Vars(r)
+	database.DeleteBudget(params["id"])
+	message := "Budget deleted Successfully with ObjectId: " + params["id"]
+	models.SuccessResponse(w, 201, message, nil)
+}
+
+//admin / user
+func DeleteAllUsersBudget(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+
+	params := mux.Vars(r)
+	database.DeleteAllUsersBudget(params["id"])
+	message := "All Budget deleted Successfully related to User ObjectId: " + params["id"]
+	models.SuccessResponse(w, 201, message, nil)
+}
+
+func GetOneBudget(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+
+	params := mux.Vars(r)
+	budget := database.GetOneBudget(params["id"])
+
+	if budget.ID == primitive.NilObjectID {
+		err := map[string]string{"Key": "Budget.Id", "Field": "No Budget with ID found"}
+		message := "No Budget with ID found, ObjectID: " + params["id"]
+		models.ErrorResponse(w, 404, message, err)
+		return
+	}
+	message := "Budget successfully retrieved with ObjectId: " + params["id"]
+	models.SuccessResponse(w, 201, message, budget)
+
 
 }

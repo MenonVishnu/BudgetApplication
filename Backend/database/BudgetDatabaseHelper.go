@@ -108,6 +108,8 @@ func GetAllBudgets() []models.Budget{
 	filter := bson.M{}
 	//object Id will not be given
 	// opts := options.Find().SetProjection(bson.M{"_id":0})
+
+	//TODO: filter out password from database using projection
 	curr, err := BudgetCollection.Find(context.Background(), filter)
 
 	if err!=nil{
@@ -137,9 +139,10 @@ func GetOneBudget(budgetId string) models.Budget{
 	var budget models.Budget
 
 	filter := bson.M{"_id":id}
+	//TODO: filter out password from database using projection
 	err = 	BudgetCollection.FindOne(context.Background(), filter).Decode(&budget)
 	if err!=nil{
-		log.Fatal(err)
+		return models.Budget{}
 	}
 	return budget
 }
@@ -154,6 +157,8 @@ func GetAllUserBudget(userId string) []models.Budget{
 	var budgets []models.Budget
 
 	filter := bson.M{"user._id":id}
+	//TODO: filter out password from database using projection
+	
 	curr, err := BudgetCollection.Find(context.Background(), filter)
 	if err!=nil{
 		log.Fatal(err)
