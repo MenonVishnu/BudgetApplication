@@ -18,7 +18,7 @@ func AddBudget(w http.ResponseWriter, r *http.Request) {
 	//creating a reference model variable
 	var budget models.Budget
 
-	//TODO: Add date and User inside the budget 
+	//TODO: Add date and User inside the budget
 
 	//decoding the JSON and assigning those values into the reference model variable
 	_ = json.NewDecoder(r.Body).Decode(&budget)
@@ -62,20 +62,20 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//admin 
-func DeleteAllBudget(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
-	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+// admin
+func DeleteAllBudget(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
 	database.DeleteAllBudget()
 	message := "All Budget Deleted Successfully"
-	models.SuccessResponse(w,201,message,nil)
+	models.SuccessResponse(w, 201, message, nil)
 }
 
-//user
-func DeleteOneBudget(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
-	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+// user
+func DeleteOneBudget(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
 	params := mux.Vars(r)
 	database.DeleteBudget(params["id"])
@@ -83,10 +83,10 @@ func DeleteOneBudget(w http.ResponseWriter, r *http.Request){
 	models.SuccessResponse(w, 201, message, nil)
 }
 
-//admin / user
-func DeleteAllUsersBudget(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
-	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+// admin / user
+func DeleteAllUsersBudget(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
 	params := mux.Vars(r)
 	database.DeleteAllUsersBudget(params["id"])
@@ -94,9 +94,27 @@ func DeleteAllUsersBudget(w http.ResponseWriter, r *http.Request){
 	models.SuccessResponse(w, 201, message, nil)
 }
 
-func GetOneBudget(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
-	w.Header().Set("Allow-Control-Allow-Methods","DELETE")
+// admin
+func GetAllBudgets(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "GET")
+
+	budgets := database.GetAllBudgets()
+	//TODO: if no budgets returned / 0 budget present handle
+	if len(budgets) == 0 {
+		err := map[string]string{"Key": "Database", "Field": "No Budgets present in Database"}
+		models.ErrorResponse(w, 404, "Database Error", err)
+		return
+	}
+
+	message := "All Budgets successfully retrieved!!"
+	models.SuccessResponse(w, 201, message, budgets)
+}
+
+// user
+func GetOneBudget(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
 	params := mux.Vars(r)
 	budget := database.GetOneBudget(params["id"])
@@ -109,6 +127,21 @@ func GetOneBudget(w http.ResponseWriter, r *http.Request){
 	}
 	message := "Budget successfully retrieved with ObjectId: " + params["id"]
 	models.SuccessResponse(w, 201, message, budget)
+}
 
+// admin / user
+func GetAllUserBudget(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
+	params := mux.Vars(r)
+	budgets := database.GetAllUserBudget(params["id"])
+
+	if len(budgets) == 0 {
+		err := map[string]string{"Key": "Database", "Field": "No Budgets present for the Current User in Database"}
+		models.ErrorResponse(w, 404, "Database Error", err)
+		return
+	}
+	message := "Budget successfully retrieved for User with ObjectId: " + params["id"]
+	models.SuccessResponse(w, 201, message, budgets)
 }
