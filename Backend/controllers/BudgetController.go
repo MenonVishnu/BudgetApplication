@@ -67,7 +67,12 @@ func DeleteAllBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
-	database.DeleteAllBudget()
+	deletedCount := database.DeleteAllBudget()
+	if deletedCount == 0 {
+		err := map[string]string{"Key": "Database", "Field": "No Budgets present in Database"}
+		models.ErrorResponse(w, 404, "Database Error", err)
+		return
+	}
 	message := "All Budget Deleted Successfully"
 	models.SuccessResponse(w, 201, message, nil)
 }
@@ -78,7 +83,12 @@ func DeleteOneBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
 	params := mux.Vars(r)
-	database.DeleteBudget(params["id"])
+	deletedCount := database.DeleteBudget(params["id"])
+	if deletedCount == 0 {
+		err := map[string]string{"Key": "Database", "Field": "No Budgets present in Database with ObjectId: " + params["id"]}
+		models.ErrorResponse(w, 404, "Database Error", err)
+		return
+	}
 	message := "Budget deleted Successfully with ObjectId: " + params["id"]
 	models.SuccessResponse(w, 201, message, nil)
 }
@@ -89,7 +99,12 @@ func DeleteAllUsersBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 
 	params := mux.Vars(r)
-	database.DeleteAllUsersBudget(params["id"])
+	deletedCount := database.DeleteAllUsersBudget(params["id"])
+	if deletedCount == 0 {
+		err := map[string]string{"Key": "Database", "Field": "No Budgets present associated with UserId:  " + params["id"]}
+		models.ErrorResponse(w, 404, "Database Error", err)
+		return
+	}
 	message := "All Budget deleted Successfully related to User ObjectId: " + params["id"]
 	models.SuccessResponse(w, 201, message, nil)
 }
@@ -100,7 +115,6 @@ func GetAllBudgets(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
 
 	budgets := database.GetAllBudgets()
-	//TODO: if no budgets returned / 0 budget present handle
 	if len(budgets) == 0 {
 		err := map[string]string{"Key": "Database", "Field": "No Budgets present in Database"}
 		models.ErrorResponse(w, 404, "Database Error", err)
