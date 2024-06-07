@@ -20,9 +20,20 @@ func Router() *mux.Router {
 	router.HandleFunc("/api/user", controllers.AddUser).Methods("POST")           //add user route
 	router.HandleFunc("/api/user/{id}", controllers.UpdateUser).Methods("PUT")    //update user route
 	router.HandleFunc("/api/user/{id}", controllers.DeleteUser).Methods("DELETE") //delete user route
-	router.HandleFunc("/api/user", controllers.DeleteAllUser).Methods("DELETE")   //delete all user route
+	router.HandleFunc("/api/users", controllers.DeleteAllUser).Methods("DELETE")  //delete all user route
 	router.HandleFunc("/api/user/{id}", controllers.GetOneUser).Methods("GET")    //get all user route
 	router.HandleFunc("/api/users", controllers.GetAllUser).Methods("GET")        //get all user route
+
+	//budget routes
+	// TODO: Test these Routes
+	router.HandleFunc("/api/budget", controllers.AddBudget).Methods("POST")                        //add budget route
+	router.HandleFunc("/api/budget/{id}", controllers.UpdateBudget).Methods("PUT")                 //update budget route
+	router.HandleFunc("/api/budget/{id}", controllers.DeleteOneBudget).Methods("DELETE")           //delete one budget route
+	router.HandleFunc("/api/budget/user/{id}", controllers.DeleteAllUsersBudget).Methods("DELETE") //delete all budgets of a specific user
+	router.HandleFunc("/api/budgets", controllers.DeleteAllBudget).Methods("DELETE")               //delete all budgets
+	router.HandleFunc("/api/budget/{id}", controllers.GetOneBudget).Methods("GET")                 //Get one budget
+	router.HandleFunc("/api/budget/user/{id}", controllers.GetAllUserBudget).Methods("GET")        //Get all budgets of a specific user
+	router.HandleFunc("/api/budgets", controllers.GetAllBudgets).Methods("GET")                    //Get all budgets
 
 	return router
 }
