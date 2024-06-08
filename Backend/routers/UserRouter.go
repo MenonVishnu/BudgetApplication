@@ -25,15 +25,14 @@ func Router() *mux.Router {
 	router.HandleFunc("/api/users", controllers.GetAllUser).Methods("GET")        //get all user route
 
 	//budget routes
-	// TODO: Test these Routes
-	router.HandleFunc("/api/budget", controllers.AddBudget).Methods("POST")                        //add budget route
-	router.HandleFunc("/api/budget/{id}", controllers.UpdateBudget).Methods("PUT")                 //update budget route
-	router.HandleFunc("/api/budget/{id}", controllers.DeleteOneBudget).Methods("DELETE")           //delete one budget route
-	router.HandleFunc("/api/budget/user/{id}", controllers.DeleteAllUsersBudget).Methods("DELETE") //delete all budgets of a specific user
-	router.HandleFunc("/api/budgets", controllers.DeleteAllBudget).Methods("DELETE")               //delete all budgets
-	router.HandleFunc("/api/budget/{id}", controllers.GetOneBudget).Methods("GET")                 //Get one budget
-	router.HandleFunc("/api/budget/user/{id}", controllers.GetAllUserBudget).Methods("GET")        //Get all budgets of a specific user
-	router.HandleFunc("/api/budgets", controllers.GetAllBudgets).Methods("GET")                    //Get all budgets
+	router.HandleFunc("/api/budget", controllers.AddBudget).Methods("POST")                         //add budget route
+	router.HandleFunc("/api/budget/{id}", controllers.UpdateBudget).Methods("PUT")                  //update budget route
+	router.HandleFunc("/api/budget/{id}", controllers.DeleteOneBudget).Methods("DELETE")            //delete one budget route
+	router.HandleFunc("/api/budgets/user/{id}", controllers.DeleteAllUsersBudget).Methods("DELETE") //delete all budgets of a specific user
+	router.HandleFunc("/api/budgets", controllers.DeleteAllBudget).Methods("DELETE")                //delete all budgets
+	router.HandleFunc("/api/budget/{id}", controllers.GetOneBudget).Methods("GET")                  //Get one budget
+	router.HandleFunc("/api/budgets/user/{id}", controllers.GetAllUserBudget).Methods("GET")        //Get all budgets of a specific user
+	router.HandleFunc("/api/budgets", controllers.GetAllBudgets).Methods("GET")                     //Get all budgets
 
 	return router
 }

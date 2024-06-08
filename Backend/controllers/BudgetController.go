@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -18,10 +19,15 @@ func AddBudget(w http.ResponseWriter, r *http.Request) {
 	//creating a reference model variable
 	var budget models.Budget
 
-	//TODO: Add date and User inside the budget
-
 	//decoding the JSON and assigning those values into the reference model variable
 	_ = json.NewDecoder(r.Body).Decode(&budget)
+
+	//Add date and User inside the budget
+	budget.Date = primitive.NewDateTimeFromTime(time.Now())
+	user := database.GetUser(budget.User.ID.Hex())
+	budget.User = &user
+	// dummy password inside this so that validation is successfull
+	budget.User.Password = "dummypasswordhacker"
 
 	//performing validation
 	validate := validator.New()
@@ -31,6 +37,8 @@ func AddBudget(w http.ResponseWriter, r *http.Request) {
 		models.ErrorResponse(w, 403, "Vallidation Error!!", errors.Error())
 		return
 	}
+
+	//TODO: if user is admin then do not allow him to add budget
 
 	budget.ID = database.AddBudget(budget)
 	message := "Budget created Successfully with ObjectId: " + budget.ID.Hex()
