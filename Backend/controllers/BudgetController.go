@@ -38,12 +38,18 @@ func AddBudget(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO: if user is admin then do not allow him to add budget
+	//if user is admin then do not allow him to add budget
+	if budget.User.Role == "Admin" {
+		err := map[string]string{"Key": "Role", "Field": "Admin Not allowed for adding budget"}
+		models.ErrorResponse(w, 403, "Database Error", err)
+		return
+	}
 
 	budget.ID = database.AddBudget(budget)
 	message := "Budget created Successfully with ObjectId: " + budget.ID.Hex()
 	models.SuccessResponse(w, 201, message, budget)
 }
+
 
 func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -54,7 +60,9 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&budget)
 
-	//Validation of updated user
+	//add updated time as well
+	budget.Date = primitive.NewDateTimeFromTime(time.Now())
+	//Validation of updated budget
 	validate := validator.New()
 	err := validate.Struct(budget)
 	if err != nil {
@@ -65,7 +73,7 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 
 	database.UpdateBudget(budget, params["id"])
 	budget.ID, _ = primitive.ObjectIDFromHex(params["id"])
-	message := "User updated Successfully with ObjectId: " + budget.ID.Hex()
+	message := "Budget updated Successfully with ObjectId: " + budget.ID.Hex()
 	models.SuccessResponse(w, 201, message, budget)
 
 }

@@ -36,8 +36,8 @@ func UpdateBudget(budget models.Budget, budgetId string) {
 	update := bson.M{"$set": bson.M{
 		"amount": budget.Amount,
 		"tags":   budget.Tags,
-		"Date":   budget.Date,
-		"User":   budget.User,
+		"date":   budget.Date,
+		"user":   budget.User,
 	}}
 
 	updatedBudget, err := BudgetCollection.UpdateOne(context.Background(), filter, update)
