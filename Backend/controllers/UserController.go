@@ -149,18 +149,23 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
+	fmt.Println("user: ", user)
 
 	pass, _id := database.CheckUser(user.Email)
 
 	//if no password then throw error because no user exists with that email
 	if pass == "" {
+		fmt.Println("1st validation", user)
 		err := map[string]string{"Key": "Authentication", "Field": "Invalid Email or Password"}
 		models.ErrorResponse(w, 401, "Authentication Error", err)
+		return
 	}
 
 	if !helperfunctions.CheckPassword(pass, user.Password) {
+		fmt.Println("2nd validation", user)
 		err := map[string]string{"Key": "Authentication", "Filed": "Invalid Email or Password"}
 		models.ErrorResponse(w, 401, "Authentication Error", err)
+		return
 	}
 
 	//jwt authentication process
@@ -169,6 +174,8 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		2. store that token in cookie
 		3. Bearer <token> in header
 	*/
+
+	user = database.GetUser(_id.Hex())
 
 	token := helperfunctions.GenerateToken(user)
 	fmt.Println("Token Generated: ", token)

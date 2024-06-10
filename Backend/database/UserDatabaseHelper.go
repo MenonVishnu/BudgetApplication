@@ -137,10 +137,10 @@ func CheckUser(email string) (string, primitive.ObjectID) {
 	var result models.User
 
 	filter := bson.M{"email": email}
-	project := bson.M{"password": 0}
-	opts := options.FindOne().SetProjection(project)
+	// project := bson.M{"password": 0}
+	// opts := options.FindOne().SetProjection(project)
 
-	err := UserCollection.FindOne(context.Background(), filter, opts).Decode(&result)
+	err := UserCollection.FindOne(context.Background(), filter).Decode(&result)
 
 	if err != nil {
 		// log.Fatal(err)
