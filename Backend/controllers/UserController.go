@@ -39,7 +39,8 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//check whether a user with the same email-ID exists or not - done
-	if database.CheckUser(user.Email) == "" {
+	userPass, _ := database.CheckUser(user.Email)
+	if userPass != "" {
 		err := map[string]string{"Key": "User.Email", "Field": "User with same Email ID exists, Please Login"}
 		models.ErrorResponse(w, 409, "Vallidation Error!!", err)
 		return
@@ -149,7 +150,7 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
 
-	pass := database.CheckUser(user.Email)
+	pass, _id := database.CheckUser(user.Email)
 
 	//if no password then throw error because no user exists with that email
 	if pass == "" {
@@ -162,8 +163,23 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		models.ErrorResponse(w, 401, "Authentication Error", err)
 	}
 
+	//jwt authentication process
+	/*
+		1. create a token using special string
+		2. store that token in cookie
+		3. Bearer <token> in header
+	*/
+
+	token := helperfunctions.GenerateToken(user)
+	fmt.Println("Token Generated: ", token)
+
+	//TODO: If token is generated successfully then set the token as cookie
+	// http.SetCookie(w, &cookie)
+
 	fmt.Println("User Successfully Logged In")
 }
+
+//TODO: add a token field in the User Model for authorization
 
 /*
 JWT Tokenization:

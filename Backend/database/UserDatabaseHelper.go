@@ -132,7 +132,7 @@ func GetAllUser() []primitive.M {
 
 // helper function
 // the below function returns true if there exists a user with the email-id provided in the function parameters
-func CheckUser(email string) string {
+func CheckUser(email string) (string, primitive.ObjectID) {
 
 	var result models.User
 
@@ -144,14 +144,14 @@ func CheckUser(email string) string {
 
 	if err != nil {
 		// log.Fatal(err)
-		return ""
+		return "", primitive.NilObjectID
 	}
 
 	//if result is empty then there is no user and thus it returns false
 	if result == (models.User{}) {
-		return ""
+		return "", primitive.NilObjectID
 	}
 
 	//if result is not empty then there is a user present with the same email id and thus returns true
-	return result.Password
+	return result.Password, result.ID
 }
