@@ -27,10 +27,25 @@ func GenerateToken(user models.User) string {
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-	tokenString := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenString.SignedString([]byte(database.GetEnvValue("SECRET_KEY")))
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(database.GetEnvValue("SECRET_KEY")))
 	if err != nil {
 		log.Fatal(err)
 	}
-	return token
+	return tokenString
+}
+
+func ValidateToken(tokenString string) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(database.GetEnvValue("SECRET_KEY")), nil
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}	
+
+	
+
+
+
 }

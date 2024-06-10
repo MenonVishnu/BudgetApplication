@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -141,7 +142,6 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // login and logout feature
-// implement OAuth instead of JWT Tokenisation
 func LogIn(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "GET")
@@ -170,18 +170,23 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 
 	//jwt authentication process
 	/*
-		1. create a token using special string
-		2. store that token in cookie
+		1. create a token using special string - done
+		2. store that token in cookie - done
 		3. Bearer <token> in header
 	*/
 
 	user = database.GetUser(_id.Hex())
 
-	token := helperfunctions.GenerateToken(user)
-	fmt.Println("Token Generated: ", token)
+	tokenString := helperfunctions.GenerateToken(user)
+	fmt.Println("Token Generated: ", tokenString)
 
-	//TODO: If token is generated successfully then set the token as cookie
-	// http.SetCookie(w, &cookie)
+	//If token is generated successfully then set the token as cookie
+	//Return the token as JSON
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   tokenString,
+		Expires: time.Now().Add(24 * time.Hour),
+	})
 
 	fmt.Println("User Successfully Logged In")
 }
