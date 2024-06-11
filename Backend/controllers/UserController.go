@@ -144,7 +144,7 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 // login and logout feature
 func LogIn(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Allow-Control-Allow-Methods", "GET")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
 
 	var user models.User
 
@@ -155,14 +155,12 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 
 	//if no password then throw error because no user exists with that email
 	if pass == "" {
-		fmt.Println("1st validation", user)
 		err := map[string]string{"Key": "Authentication", "Field": "Invalid Email or Password"}
 		models.ErrorResponse(w, 401, "Authentication Error", err)
 		return
 	}
 
 	if !helperfunctions.CheckPassword(pass, user.Password) {
-		fmt.Println("2nd validation", user)
 		err := map[string]string{"Key": "Authentication", "Filed": "Invalid Email or Password"}
 		models.ErrorResponse(w, 401, "Authentication Error", err)
 		return
@@ -181,17 +179,24 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Token Generated: ", tokenString)
 
 	//If token is generated successfully then set the token as cookie
-	//Return the token as JSON
+	//Return the token as JSON Cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
 		Value:   tokenString,
 		Expires: time.Now().Add(24 * time.Hour),
 	})
 
+	//set header
+	w.Header().Set("Authorization", "Bearer "+tokenString)
+
 	fmt.Println("User Successfully Logged In")
 }
 
-//TODO: add a token field in the User Model for authorization
+func Logout(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+	
+}
 
 /*
 JWT Tokenization:

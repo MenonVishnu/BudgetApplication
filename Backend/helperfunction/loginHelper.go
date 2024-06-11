@@ -1,8 +1,10 @@
 package helperfunctions
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -53,6 +55,10 @@ func ValidateToken(tokenString string) (Claims, *jwt.Token) {
 // middleware for Authentication for User
 func AuthMiddlewareForUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		bearerToken := w.Header().Values("Authorization")
+		reqToken := strings.Split(bearerToken[0], " ")[1]
+		fmt.Println("reqToken: ", reqToken)
+
 		cookie, err := r.Cookie("token")
 		if err != nil {
 			log.Fatal(err)
@@ -61,10 +67,16 @@ func AuthMiddlewareForUser(next http.Handler) http.Handler {
 		claims, token := ValidateToken(cookie.Value)
 		if !token.Valid {
 			//error message
+			err := map[string]string{"Key": "Authentication", "Filed": "Session Expired!! Login Again"}
+			models.ErrorResponse(w, 401, "Authentication Error", err)
+			return
 		}
 
 		if claims.Role != "User" {
 			//error message
+			err := map[string]string{"Key": "Authentication", "Filed": "Admin Not Autherized!!"}
+			models.ErrorResponse(w, 401, "Authentication Error", err)
+			return
 		}
 
 		next.ServeHTTP(w, r)
@@ -82,10 +94,16 @@ func AuthMiddlewareForAdmin(next http.Handler) http.Handler {
 		claims, token := ValidateToken(cookie.Value)
 		if !token.Valid {
 			//error message
+			err := map[string]string{"Key": "Authentication", "Filed": "Session Expired!! Login Again"}
+			models.ErrorResponse(w, 401, "Authentication Error", err)
+			return
 		}
 
 		if claims.Role != "Admin" {
 			//error message
+			err := map[string]string{"Key": "Authentication", "Filed": "User Not Autherized!!"}
+			models.ErrorResponse(w, 401, "Authentication Error", err)
+			return
 		}
 
 		next.ServeHTTP(w, r)
