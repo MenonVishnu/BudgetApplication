@@ -16,6 +16,9 @@ func Router() *mux.Router {
 		json.NewEncoder(w).Encode("Hello From Port 4000")
 	}).Methods("GET")
 
+	//TODO: Create a sub router for user and admin
+
+	//userprotected routes:
 	//user routes
 	router.HandleFunc("/api/user", controllers.AddUser).Methods("POST")           //add user route
 	router.HandleFunc("/api/user/{id}", controllers.UpdateUser).Methods("PUT")    //update user route
@@ -27,6 +30,7 @@ func Router() *mux.Router {
 	//Signin & Signout routes
 	router.HandleFunc("/api/login", controllers.LogIn).Methods("POST") //Login route
 
+	//adminprotected routes
 	//budget routes
 	router.HandleFunc("/api/budget", controllers.AddBudget).Methods("POST")                         //add budget route
 	router.HandleFunc("/api/budget/{id}", controllers.UpdateBudget).Methods("PUT")                  //update budget route

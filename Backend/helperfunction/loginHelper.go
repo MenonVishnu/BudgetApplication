@@ -2,6 +2,7 @@ package helperfunctions
 
 import (
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -35,17 +36,59 @@ func GenerateToken(user models.User) string {
 	return tokenString
 }
 
-func ValidateToken(tokenString string) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+func ValidateToken(tokenString string) (Claims, *jwt.Token) {
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(database.GetEnvValue("SECRET_KEY")), nil
 	})
 
 	if err != nil {
 		log.Fatal(err)
-	}	
+	}
 
-	
+	return *claims, token
+}
 
+// middleware for Authentication for User
+func AuthMiddlewareForUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("token")
+		if err != nil {
+			log.Fatal(err)
+		}
 
+		claims, token := ValidateToken(cookie.Value)
+		if !token.Valid {
+			//error message
+		}
 
+		if claims.Role != "User" {
+			//error message
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// middleware for Authentication for Admin
+func AuthMiddlewareForAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("token")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		claims, token := ValidateToken(cookie.Value)
+		if !token.Valid {
+			//error message
+		}
+
+		if claims.Role != "Admin" {
+			//error message
+		}
+
+		next.ServeHTTP(w, r)
+
+	})
 }
