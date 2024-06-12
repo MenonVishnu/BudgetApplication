@@ -1,10 +1,10 @@
 package helperfunctions
 
 import (
-	"fmt"
+	// "fmt"
 	"log"
 	"net/http"
-	"strings"
+	// "strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -55,9 +55,9 @@ func ValidateToken(tokenString string) (Claims, *jwt.Token) {
 // middleware for Authentication for User
 func AuthMiddlewareForUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		bearerToken := w.Header().Values("Authorization")
-		reqToken := strings.Split(bearerToken[0], " ")[1]
-		fmt.Println("reqToken: ", reqToken)
+		// bearerToken := w.Header().Values("authorization")
+		// reqToken := strings.Split(bearerToken[0], " ")[1]
+		// fmt.Println("reqToken: ", reqToken)
 
 		cookie, err := r.Cookie("token")
 		if err != nil {
