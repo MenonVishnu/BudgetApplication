@@ -32,7 +32,7 @@ func Router() *mux.Router {
 	router.HandleFunc("/api/logout", controllers.Logout).Methods("POST") //Login route
 
 	//user routes
-	userRouter.HandleFunc("/api/user", controllers.AddUser).Methods("POST")           //add user route
+	router.HandleFunc("/api/user", controllers.AddUser).Methods("POST")           //add user route
 	userRouter.HandleFunc("/api/user/{id}", controllers.UpdateUser).Methods("PUT")    //update user route
 	userRouter.HandleFunc("/api/user/{id}", controllers.DeleteUser).Methods("DELETE") //delete user route
 	userRouter.HandleFunc("/api/user/{id}", controllers.GetOneUser).Methods("GET")    //get all user route

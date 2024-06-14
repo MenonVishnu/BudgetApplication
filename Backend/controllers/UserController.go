@@ -195,7 +195,16 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 func Logout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "POST")
-	
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: time.Now(),
+	})
+
+	w.Header().Del("Authorization")
+
+	fmt.Println("User Logged Out Successfully")
 }
 
 /*
