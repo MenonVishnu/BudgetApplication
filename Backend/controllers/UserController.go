@@ -189,6 +189,9 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	//set header
 	w.Header().Set("Authorization", "Bearer "+tokenString)
 
+	message := "User logged In Successfully"
+	models.SuccessResponse(w, 201, message, tokenString)
+
 	fmt.Println("User Successfully Logged In")
 }
 
@@ -196,13 +199,18 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "POST")
 
+	//removing cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
 		Value:   "",
 		Expires: time.Now(),
 	})
 
+	//removing header
 	w.Header().Del("Authorization")
+
+	message := "User logged Out Successfully"
+	models.SuccessResponse(w, 201, message, nil)
 
 	fmt.Println("User Logged Out Successfully")
 }
